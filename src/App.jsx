@@ -4,6 +4,7 @@ import { ThemeProvider, createTheme } from "@mui/material";
 import { CssBaseline } from "@mui/material";
 import NavBar from "./components/NabBar/NabBar";
 import HeroSection from "./components/HeroSection/HeroSection";
+import Team from "./components/Team/Theme";
 import { selectDarkMode } from "./features/theme/themeSlice";
 
 const App = () => {
@@ -55,6 +56,7 @@ const App = () => {
       <CssBaseline />
       <NavBar />
       <HeroSection />
+      <Team />
       {/* Additional content can go here */}
     </ThemeProvider>
   );

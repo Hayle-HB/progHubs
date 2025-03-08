@@ -12,14 +12,17 @@ import { styled } from "@mui/system";
 import { useSelector } from "react-redux";
 import { selectDarkMode } from "../../features/theme/themeSlice";
 import { motion } from "framer-motion";
-import CodeIcon from "@mui/icons-material/Code";
-import TeamIcon from "@mui/icons-material/Groups";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 // Styled components with responsive design
 const HeroContainer = styled(Box)(({ theme }) => ({
-  minHeight: "100vh",
+  minHeight: "calc(100vh - 80px)",
+  marginTop: "80px",
   display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
   alignItems: "center",
   padding: theme.spacing(4, 0),
   position: "relative",
@@ -27,17 +30,23 @@ const HeroContainer = styled(Box)(({ theme }) => ({
   backgroundSize: "cover",
   backgroundPosition: "center",
   transition: "background 0.5s ease-in-out",
+  [theme.breakpoints.down("sm")]: {
+    minHeight: "calc(100vh - 64px)",
+    marginTop: "64px",
+    padding: theme.spacing(3, 0),
+  },
 }));
 
 const ContentWrapper = styled(Container)(({ theme }) => ({
   position: "relative",
   zIndex: 2,
+  width: "100%",
 }));
 
 const HeroHeading = styled(Typography)(({ theme }) => ({
   fontWeight: 800,
   marginBottom: theme.spacing(2),
-  background: "linear-gradient(45deg, #4A90E2, #845EC2)",
+  background: "linear-gradient(45deg, #00E676, #1DE9B6)",
   backgroundClip: "text",
   WebkitBackgroundClip: "text",
   WebkitTextFillColor: "transparent",
@@ -45,6 +54,9 @@ const HeroHeading = styled(Typography)(({ theme }) => ({
   [theme.breakpoints.down("md")]: {
     fontSize: "2.5rem",
     textAlign: "center",
+  },
+  [theme.breakpoints.down("sm")]: {
+    fontSize: "2rem",
   },
 }));
 
@@ -55,6 +67,10 @@ const HeroSubheading = styled(Typography)(({ theme }) => ({
   [theme.breakpoints.down("md")]: {
     fontSize: "1.2rem",
     textAlign: "center",
+  },
+  [theme.breakpoints.down("sm")]: {
+    fontSize: "1rem",
+    marginBottom: theme.spacing(3),
   },
 }));
 
@@ -70,25 +86,9 @@ const ActionButton = styled(Button)(({ theme }) => ({
     transform: "translateY(-5px)",
     boxShadow: "0 12px 25px rgba(0, 0, 0, 0.3)",
   },
-}));
-
-const StatsCard = styled(motion.div)(({ theme, darkMode }) => ({
-  padding: theme.spacing(3),
-  borderRadius: "16px",
-  background: darkMode ? "rgba(30, 30, 30, 0.8)" : "rgba(255, 255, 255, 0.9)",
-  backdropFilter: "blur(10px)",
-  boxShadow: darkMode
-    ? "0 10px 30px rgba(0, 0, 0, 0.3)"
-    : "0 10px 30px rgba(0, 0, 0, 0.1)",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "flex-start",
-  marginBottom: theme.spacing(2),
-  border: darkMode
-    ? "1px solid rgba(255, 255, 255, 0.1)"
-    : "1px solid rgba(0, 0, 0, 0.05)",
-  [theme.breakpoints.down("md")]: {
-    alignItems: "center",
+  [theme.breakpoints.down("sm")]: {
+    padding: theme.spacing(1.2, 3),
+    fontSize: "1rem",
   },
 }));
 
@@ -123,7 +123,7 @@ const SpinningBorder = styled(motion.div)(({ theme }) => ({
   width: "40px",
   height: "40px",
   borderRadius: "50%",
-  background: "linear-gradient(45deg, #4A90E2, #845EC2, #D65DB1, #FF6F91)",
+  background: "linear-gradient(45deg, #00E676, #1DE9B6, #00E676, #1DE9B6)",
   backgroundSize: "300% 300%",
   opacity: 0.8,
   filter: "blur(8px)",
@@ -139,12 +139,24 @@ const ButtonContainer = styled(Box)(({ theme }) => ({
   },
 }));
 
-// Add this new component after other styled components
 const TypewriterText = ({ text }) => {
+  const darkMode = useSelector(selectDarkMode);
   const characters = text.split("");
 
   return (
-    <motion.span initial={{ opacity: 1 }} animate={{ opacity: 1 }}>
+    <motion.span
+      initial={{ opacity: 1 }}
+      animate={{ opacity: 1 }}
+      style={{
+        background: !darkMode
+          ? "linear-gradient(45deg, #333333, #666666)"
+          : undefined,
+        backgroundClip: !darkMode ? "text" : undefined,
+        WebkitBackgroundClip: !darkMode ? "text" : undefined,
+        WebkitTextFillColor: !darkMode ? "transparent" : undefined,
+        color: darkMode ? "#00E676" : undefined,
+      }}
+    >
       {characters.map((char, index) => (
         <motion.span
           key={index}
@@ -163,105 +175,187 @@ const TypewriterText = ({ text }) => {
   );
 };
 
-// Add this new component for the code container
+// Update the CodeContainer component with hover effects
 const CodeContainer = styled(Box)(({ theme, darkMode }) => ({
   padding: theme.spacing(3),
-  borderRadius: "8px",
+  borderRadius: "12px",
   fontFamily: "'Fira Code', monospace",
   background: darkMode ? "#1E1E1E" : "#2D2D2D",
   color: "#E0E0E0",
-  boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
-  overflowX: "auto",
+  boxShadow: "0 10px 30px rgba(0, 0, 0, 0.4)",
   width: "100%",
   marginBottom: theme.spacing(4),
   border: "1px solid rgba(255, 255, 255, 0.1)",
-  maxWidth: "600px",
+  position: "relative",
+  height: "460px",
+  transition: "all 0.3s ease-in-out",
+  "&:before": {
+    content: '""',
+    position: "absolute",
+    top: "12px",
+    left: "12px",
+    width: "12px",
+    height: "12px",
+    borderRadius: "50%",
+    backgroundColor: "#FF5F56",
+    boxShadow: "20px 0 0 #FFBD2E, 40px 0 0 #27C93F",
+  },
+  "&:after": {
+    content: '"Python"',
+    position: "absolute",
+    top: "10px",
+    right: "15px",
+    fontSize: "0.75rem",
+    color: "rgba(255, 255, 255, 0.4)",
+    transition: "opacity 0.3s ease",
+  },
+  "& pre": {
+    margin: "0 !important",
+    marginTop: "20px !important",
+    background: "transparent !important",
+    fontFamily: "'Fira Code', monospace !important",
+    height: "calc(100% - 20px) !important",
+    overflow: "hidden !important",
+    transition: "all 0.3s ease-in-out",
+  },
+  "&:hover": {
+    boxShadow: `0 15px 35px rgba(0, 230, 118, 0.3), 0 0 15px ${
+      darkMode ? "rgba(0, 230, 118, 0.1)" : "rgba(0, 230, 118, 0.2)"
+    }`,
+    border: `1px solid ${
+      darkMode ? "rgba(0, 230, 118, 0.2)" : "rgba(0, 230, 118, 0.3)"
+    }`,
+    "&:after": {
+      color: "rgba(255, 255, 255, 0.7)",
+    },
+    "& .window-controls": {
+      opacity: 1,
+    },
+    "& .line-highlight": {
+      opacity: 0.15,
+    },
+  },
   [theme.breakpoints.down("md")]: {
-    maxWidth: "100%",
+    padding: theme.spacing(2.5),
+    height: "440px",
+  },
+  [theme.breakpoints.down("sm")]: {
+    padding: theme.spacing(2),
+    height: "420px",
+    "&:before": {
+      width: "8px",
+      height: "8px",
+      top: "10px",
+      left: "10px",
+      boxShadow: "16px 0 0 #FFBD2E, 32px 0 0 #27C93F",
+    },
   },
 }));
 
-// Code typing component
-const TypewriterCode = ({ code }) => {
+// Add this component to create the animated line highlight
+const LineHighlight = styled(motion.div)(({ theme, darkMode }) => ({
+  position: "absolute",
+  left: 0,
+  right: 0,
+  height: "28px",
+  background: `linear-gradient(90deg, ${
+    darkMode ? "rgba(0, 230, 118, 0)" : "rgba(0, 230, 118, 0)"
+  }, ${darkMode ? "rgba(0, 230, 118, 0.3)" : "rgba(0, 230, 118, 0.15)"})`,
+  opacity: 0,
+  transition: "opacity 0.3s ease",
+  pointerEvents: "none",
+}));
+
+// Update the AnimatedCode component to incorporate the line highlight effect
+const AnimatedCode = ({ code }) => {
+  const [displayedCode, setDisplayedCode] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [highlightLine, setHighlightLine] = useState(0);
   const characters = code.split("");
+  const darkMode = useSelector(selectDarkMode);
+
+  useEffect(() => {
+    if (currentIndex < characters.length) {
+      const timer = setTimeout(() => {
+        setDisplayedCode((prev) => prev + characters[currentIndex]);
+        setCurrentIndex((prev) => prev + 1);
+      }, 20);
+
+      return () => clearTimeout(timer);
+    }
+  }, [currentIndex, characters]);
+
+  // Animation for the line highlight
+  useEffect(() => {
+    if (displayedCode && currentIndex >= characters.length) {
+      const interval = setInterval(() => {
+        setHighlightLine((prev) => (prev + 1) % 12); // Cycle through lines
+      }, 2000);
+
+      return () => clearInterval(interval);
+    }
+  }, [displayedCode, currentIndex, characters.length]);
 
   return (
-    <motion.div initial={{ opacity: 1 }} animate={{ opacity: 1 }}>
-      {characters.map((char, index) => (
-        <motion.span
-          key={index}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{
-            duration: 0.05,
-            delay: index * 0.02,
-            ease: "easeIn",
-          }}
-          style={{
-            color: getCharColor(char, code.substring(0, index)),
+    <Box sx={{ position: "relative", height: "100%" }}>
+      <Box
+        className="window-controls"
+        sx={{
+          position: "absolute",
+          top: "10px",
+          left: "50px",
+          right: "50px",
+          opacity: 0.6,
+          transition: "opacity 0.3s ease",
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        <Box></Box>
+        <Box
+          sx={{
+            fontSize: "10px",
+            color: "rgba(255,255,255,0.4)",
+            textTransform: "uppercase",
+            letterSpacing: "1px",
           }}
         >
-          {char}
-        </motion.span>
-      ))}
-    </motion.div>
-  );
-};
+          twoSum.py - Read only
+        </Box>
+      </Box>
 
-// Simple function to color Python syntax
-const getCharColor = (char, prevText) => {
-  // Simple Python syntax coloring
-  if (
-    prevText.endsWith("def ") ||
-    prevText.endsWith("class ") ||
-    prevText.match(/def\s+\w+$/) ||
-    prevText.match(/class\s+\w+$/)
-  ) {
-    return "#569CD6"; // Function/class names in blue
-  } else if (
-    [
-      "def",
-      "class",
-      "import",
-      "from",
-      "return",
-      "if",
-      "else",
-      "elif",
-      "for",
-      "while",
-      "try",
-      "except",
-      "with",
-      "as",
-      "in",
-      "not",
-      "and",
-      "or",
-    ].includes(prevText.split(/\s+/).pop())
-  ) {
-    return "#C586C0"; // Keywords in purple
-  } else if (char.match(/[0-9]/)) {
-    return "#B5CEA8"; // Numbers in green
-  } else if (
-    ['"', "'"].includes(char) ||
-    (prevText.match(/["'](?:[^"'\\]|\\.)*$/) && !prevText.endsWith("\\"))
-  ) {
-    return "#CE9178"; // Strings in orange
-  } else if (char === "#" || prevText.match(/#.*$/)) {
-    return "#6A9955"; // Comments in green
-  } else if (char.match(/[\(\)\[\]\{\}]/)) {
-    return "#D4D4D4"; // Brackets in white
-  } else if (char.match(/[+\-*/=<>:\.]/)) {
-    return "#D4D4D4"; // Operators in white
-  }
-  return "#9CDCFE"; // Default light blue for variables
+      {/* Animated line highlight */}
+      <LineHighlight
+        className="line-highlight"
+        darkMode={darkMode}
+        style={{
+          top: `${49 + highlightLine * 24}px`,
+        }}
+      />
+
+      <SyntaxHighlighter
+        language="python"
+        style={vscDarkPlus}
+        showLineNumbers={true}
+        wrapLines={true}
+        customStyle={{
+          fontSize: "0.9rem",
+          lineHeight: "1.5",
+          borderRadius: "4px",
+          overflow: "hidden",
+        }}
+      >
+        {displayedCode}
+      </SyntaxHighlighter>
+    </Box>
+  );
 };
 
 const HeroSection = () => {
   const darkMode = useSelector(selectDarkMode);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [animate, setAnimate] = useState(false);
 
   // Animation trigger
@@ -270,67 +364,37 @@ const HeroSection = () => {
   }, []);
 
   const scrollToNext = () => {
+    const navbarHeight = isSmallScreen ? 64 : 80;
     window.scrollTo({
-      top: window.innerHeight,
+      top: window.innerHeight - navbarHeight,
       behavior: "smooth",
     });
   };
 
-  const cardVariants = {
-    hidden: { y: 50, opacity: 0 },
-    visible: (i) => ({
-      y: 0,
-      opacity: 1,
-      transition: {
-        delay: i * 0.2,
-        duration: 0.6,
-        ease: "easeOut",
-      },
-    }),
-  };
-
-  const stats = [
-    {
-      icon: (
-        <CodeIcon
-          sx={{ fontSize: 40, color: darkMode ? "#4A90E2" : "#2D68B2" }}
-        />
-      ),
-      title: "160+ Developers",
-      subtitle: "Expert talent ready for your project",
-    },
-    {
-      icon: (
-        <TeamIcon
-          sx={{ fontSize: 40, color: darkMode ? "#845EC2" : "#5E42A6" }}
-        />
-      ),
-      title: "5 Specialized Teams",
-      subtitle: "Frontend, Backend, Mobile, ML, and UI/UX",
-    },
-  ];
-
-  // Sample Python code
-  const pythonCode = `# Machine Learning function
-def train_model(data, model_type="regression"):
-    """
-    Train a machine learning model on the provided data
-    """
-    if model_type == "regression":
-        model = LinearRegression()
-    elif model_type == "classification":
-        model = RandomForest()
-    
-    # Fit the model
-    model.fit(data.X, data.y)
-    return model`;
+  // Properly indented Python code
+  const pythonCode = `class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+        nums.sort()        
+        left, right = 0, len(nums) - 1
+        
+        while left < right:
+            current = nums[left] + nums[right]
+            
+            if current == target:
+                  return [left, right]
+            elif current > target:  
+                right -= 1
+            else:
+                left += 1                
+                
+        return [-1, -1]`;
 
   return (
     <HeroContainer
       sx={{
         background: darkMode
-          ? "linear-gradient(135deg, #121212, #1E1E1E)"
-          : "linear-gradient(135deg, #f7f7f7, #ffffff)",
+          ? "linear-gradient(135deg, #1A1A1A, #2D2D2D)" // Dark grey background for dark mode
+          : "linear-gradient(135deg, #FFFFFF, #F5F5F5)", // White to slight grey for light mode
         color: darkMode ? "#ffffff" : "#333333",
         position: "relative",
       }}
@@ -341,7 +405,12 @@ def train_model(data, model_type="regression"):
         maxWidth="lg"
         sx={{ position: "relative", height: "100%" }}
       >
-        <Grid container spacing={6} alignItems="center">
+        <Grid
+          container
+          spacing={{ xs: 4, sm: 6, md: 8 }}
+          alignItems="center"
+          sx={{ minHeight: { xs: "80vh", sm: "70vh" } }}
+        >
           {/* Left column - Text and buttons */}
           <Grid item xs={12} md={6}>
             <motion.div
@@ -351,7 +420,12 @@ def train_model(data, model_type="regression"):
             >
               <HeroHeading
                 variant="h1"
-                fontSize={{ xs: "2.5rem", md: "3.5rem", lg: "4rem" }}
+                fontSize={{
+                  xs: "2rem",
+                  sm: "2.5rem",
+                  md: "3.5rem",
+                  lg: "4rem",
+                }}
               >
                 <TypewriterText text="Meet Our 160+ Developers at progHubs!" />
               </HeroHeading>
@@ -360,7 +434,8 @@ def train_model(data, model_type="regression"):
                 variant="h5"
                 sx={{
                   color: darkMode ? "rgba(255,255,255,0.8)" : "rgba(0,0,0,0.7)",
-                  fontSize: { xs: "1.1rem", md: "1.3rem" },
+                  fontSize: { xs: "0.9rem", sm: "1.1rem", md: "1.3rem" },
+                  lineHeight: { xs: 1.4, md: 1.6 },
                 }}
               >
                 A talented team of frontend, backend, mobile, ML, and UI/UX
@@ -371,9 +446,10 @@ def train_model(data, model_type="regression"):
               <Box
                 sx={{
                   display: "flex",
-                  gap: 2,
-                  mt: 4,
+                  gap: { xs: 1.5, sm: 2 },
+                  mt: { xs: 3, md: 4 },
                   justifyContent: { xs: "center", md: "flex-start" },
+                  flexWrap: { xs: "wrap", sm: "nowrap" },
                 }}
               >
                 <ButtonContainer>
@@ -383,6 +459,7 @@ def train_model(data, model_type="regression"):
                     component={motion.button}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+                    size={isSmallScreen ? "medium" : "large"}
                   >
                     Explore Team
                   </ActionButton>
@@ -414,6 +491,7 @@ def train_model(data, model_type="regression"):
                     component={motion.button}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+                    size={isSmallScreen ? "medium" : "large"}
                   >
                     Learn More
                   </ActionButton>
@@ -434,62 +512,36 @@ def train_model(data, model_type="regression"):
             </motion.div>
           </Grid>
 
-          {/* Right column - Code container */}
-          <Grid item xs={12} md={6}>
+          {/* Right column - Enhanced code container */}
+          <Grid
+            item
+            xs={12}
+            md={6}
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: { xs: "auto", md: "500px" }, // Fixed height on medium+ screens
+            }}
+          >
             <motion.div
               initial={{ opacity: 0, y: -30 }}
               animate={animate ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+              style={{
+                width: "100%",
+                maxWidth: "600px",
+                display: "flex",
+                justifyContent: "center",
+              }}
             >
               <CodeContainer darkMode={darkMode}>
-                <TypewriterCode code={pythonCode} />
+                <AnimatedCode code={pythonCode} />
               </CodeContainer>
             </motion.div>
           </Grid>
         </Grid>
       </ContentWrapper>
-
-      {/* Stats boxes moved outside ContentWrapper to ensure they're at bottom */}
-      <Box
-        sx={{
-          position: "absolute",
-          bottom: "80px",
-          right: { xs: "50%", md: "40px" },
-          transform: { xs: "translateX(50%)", md: "none" },
-          display: "flex",
-          flexDirection: "row",
-          gap: 3,
-          width: { xs: "90%", sm: "auto" },
-          maxWidth: "800px",
-          justifyContent: "center",
-          zIndex: 5,
-        }}
-      >
-        {stats.map((stat, index) => (
-          <StatsCard
-            key={index}
-            darkMode={darkMode}
-            component={motion.div}
-            initial="hidden"
-            animate={animate ? "visible" : "hidden"}
-            custom={index}
-            variants={cardVariants}
-            sx={{
-              flex: { xs: "1 1 100%", sm: "1 1 auto" },
-              maxWidth: { xs: "100%", sm: "250px" },
-              minWidth: { sm: "180px" },
-            }}
-          >
-            <Box sx={{ mb: 1 }}>{stat.icon}</Box>
-            <Typography variant="h6" fontWeight={700} sx={{ mb: 1 }}>
-              {stat.title}
-            </Typography>
-            <Typography variant="body2" sx={{ opacity: 0.8 }}>
-              {stat.subtitle}
-            </Typography>
-          </StatsCard>
-        ))}
-      </Box>
 
       <ScrollIndicator
         onClick={scrollToNext}
@@ -501,6 +553,16 @@ def train_model(data, model_type="regression"):
         transition={{
           repeat: Infinity,
           duration: 1.5,
+        }}
+        sx={{
+          position: "absolute",
+          bottom: "30px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          display: { xs: "none", sm: "flex" }, // Hide on very small screens
+          flexDirection: "column",
+          alignItems: "center",
+          cursor: "pointer",
         }}
       >
         <Typography variant="body2" sx={{ mb: 1, opacity: 0.8 }}>

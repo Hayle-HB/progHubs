@@ -4,8 +4,9 @@ import { ThemeProvider, createTheme } from "@mui/material";
 import { CssBaseline } from "@mui/material";
 import NavBar from "./components/NabBar/NabBar";
 import HeroSection from "./components/HeroSection/HeroSection";
-import Team from "./components/Team/Theme";
 import { selectDarkMode } from "./features/theme/themeSlice";
+import Team from "./components/Team/Team";
+// import Upwork from './components/TextEditerWithImage/Upwork'
 
 const App = () => {
   const isDarkMode = useSelector(selectDarkMode);
@@ -53,11 +54,18 @@ const App = () => {
 
   return (
     <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
-      <CssBaseline />
-      <NavBar />
-      <HeroSection />
+        <CssBaseline />
+        <NavBar />
+        <HeroSection /> 
       <Team />
-      {/* Additional content can go here */}
+      {/* Additional content can go here
+
+          {/* <Upwork/> */}
+      
+
+
+
+
     </ThemeProvider>
   );
 };

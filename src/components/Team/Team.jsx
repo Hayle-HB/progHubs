@@ -98,11 +98,6 @@ const Team = () => {
     // Sort members
     filtered = sortMembers(filtered, sortBy);
 
-    // Reset to page 1 when filters change
-    if (currentPage !== 1 && filtered.length > 0) {
-      setCurrentPage(1);
-    }
-
     // Calculate pagination
     const startIndex = (currentPage - 1) * itemsPerPage;
     setDisplayedMembers(filtered.slice(startIndex, startIndex + itemsPerPage));
@@ -115,6 +110,12 @@ const Team = () => {
     sortBy,
     currentPage,
   ]);
+
+  // Separate useEffect to reset page when filters change, not when page changes
+  useEffect(() => {
+    // Reset to page 1 when filters change
+    setCurrentPage(1);
+  }, [search, department, experience, selectedSkills, sortBy]);
 
   // Calculate total pages
   const totalPages = Math.max(
@@ -213,19 +214,90 @@ const Team = () => {
         {/* Main content area */}
         <div className="flex-1">
           <div className="p-6 md:p-8">
-            {/* Page header */}
-            <div className="mb-8">
-              <h1
-                className={`text-2xl font-bold mb-2 ${
-                  darkMode ? "text-white" : "text-[#333333]"
+            {/* Completely redesigned header - centered with new styling */}
+            <div className="text-center max-w-4xl mx-auto mb-16 px-4">
+              <div
+                className={`inline-block px-4 py-1.5 rounded-full text-sm font-medium mb-4 ${
+                  darkMode
+                    ? "bg-[#00E676]/10 text-[#00E676]"
+                    : "bg-[#00E676]/10 text-[#00E676]"
                 }`}
               >
-                Our Development Team
+                Our Talented Professionals
+              </div>
+
+              <h1
+                className={`text-3xl md:text-5xl font-bold mb-6 ${
+                  darkMode ? "text-white" : "text-gray-900"
+                }`}
+              >
+                The Team Behind Our Success
               </h1>
-              <p className={`${darkMode ? "text-white/70" : "text-black/70"}`}>
-                Meet our talented team of developers working across various
-                technologies
+
+              <p
+                className={`text-lg md:text-xl mx-auto max-w-3xl ${
+                  darkMode ? "text-white/70" : "text-gray-600"
+                }`}
+              >
+                Meet the creative minds and technical experts who transform
+                ideas into exceptional digital solutions. Each member brings
+                unique talents and perspectives to our collaborative
+                environment.
               </p>
+
+              {showFilters && (
+                <div
+                  className={`mt-8 inline-flex items-center gap-2 px-4 py-2 rounded-lg ${
+                    darkMode ? "bg-white/5" : "bg-gray-100"
+                  }`}
+                >
+                  <div className="relative flex-grow">
+                    <input
+                      type="text"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      placeholder="Looking for specific skills?"
+                      className={`py-1 pl-7 pr-2 w-full bg-transparent border-none ${
+                        darkMode
+                          ? "text-white/60 placeholder-white/60"
+                          : "text-gray-500 placeholder-gray-500"
+                      } focus:outline-none focus:ring-0`}
+                    />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className={`h-5 w-5 absolute left-0 top-1/2 transform -translate-y-1/2 ${
+                        darkMode ? "text-white/60" : "text-gray-500"
+                      }`}
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                  <button
+                    onClick={() => {
+                      // For mobile, open the mobile sidebar
+                      if (window.innerWidth < 768) {
+                        setIsMobileSidebarOpen(true);
+                      } else {
+                        // For desktop, make sure desktop sidebar is open
+                        setIsDesktopSidebarOpen(true);
+                      }
+                    }}
+                    className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                      darkMode
+                        ? "bg-[#00E676] text-black hover:bg-[#00E676]/90"
+                        : "bg-[#00E676] text-black hover:bg-[#00E676]/90"
+                    }`}
+                  >
+                    Use Filters
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Active filters (horizontal) */}

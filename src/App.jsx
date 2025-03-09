@@ -7,7 +7,8 @@ import HeroSection from "./components/HeroSection/HeroSection";
 import { selectDarkMode } from "./features/theme/themeSlice";
 import Team from "./components/Team/Team";
 // import Upwork from './components/TextEditerWithImage/Upwork'
-
+import Footer from "./components/Footer/Footer";
+import Temp from "./components/Temp/Temp";
 const App = () => {
   const isDarkMode = useSelector(selectDarkMode);
 
@@ -54,18 +55,12 @@ const App = () => {
 
   return (
     <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
-        <CssBaseline />
-        <NavBar />
-        <HeroSection /> 
+      <CssBaseline />
+      <NavBar />
+      <HeroSection />
       <Team />
-      {/* Additional content can go here
-
-          {/* <Upwork/> */}
-      
-
-
-
-
+      <Temp/>
+      <Footer />
     </ThemeProvider>
   );
 };

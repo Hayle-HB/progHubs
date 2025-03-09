@@ -19,6 +19,7 @@ const TeamMemberCard = ({
   darkMode,
 }) => {
   const [showModal, setShowModal] = useState(false);
+  const [expandSkills, setExpandSkills] = useState(false);
 
   return (
     <>
@@ -72,66 +73,41 @@ const TeamMemberCard = ({
               {member.name}
             </h3>
 
-            <p className="text-[#00E676] text-sm font-medium mb-3">
+            <p className="text-gray-400 text-sm font-medium mb-3">
               {member.role} • {member.experience}
             </p>
 
             {/* Skills with consistent styling */}
             <div className="flex flex-wrap gap-1">
-              {member.skills.slice(0, 3).map((skill) => (
+              {(expandSkills ? member.skills : member.skills.slice(0, 3)).map(
+                (skill) => (
+                  <button
+                    key={`${member.id}-${skill}`}
+                    onClick={() => handleSkillToggle(skill)}
+                    className={`m-0.5 px-2 py-1 rounded-md text-xs transition-colors ${
+                      selectedSkills.includes(skill)
+                        ? "bg-[rgba(0,230,118,0.1)] text-[#00E676] border border-[rgba(0,230,118,0.3)]"
+                        : darkMode
+                        ? "bg-white/5 text-white/80 hover:bg-white/10"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
+                  >
+                    {skill}
+                  </button>
+                )
+              )}
+
+              {!expandSkills && member.skills.length > 3 && (
                 <button
-                  key={`${member.id}-${skill}`}
-                  onClick={() => handleSkillToggle(skill)}
-                  className={`m-0.5 px-2 py-1 rounded-md text-xs transition-colors ${
-                    selectedSkills.includes(skill)
-                      ? "bg-[rgba(0,230,118,0.1)] text-[#00E676] border border-[rgba(0,230,118,0.3)]"
-                      : darkMode
-                      ? "bg-white/5 text-white/80 hover:bg-white/10"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  onClick={() => setExpandSkills(true)}
+                  className={`m-0.5 px-2 py-1 rounded-md text-xs cursor-pointer ${
+                    darkMode
+                      ? "bg-white/5 text-white/80"
+                      : "bg-gray-100 text-gray-700"
                   }`}
                 >
-                  {skill}
+                  +{member.skills.length - 3}
                 </button>
-              ))}
-
-              {member.skills.length > 3 && (
-                <div className="relative group">
-                  <span
-                    className={`m-0.5 px-2 py-1 rounded-md text-xs cursor-pointer ${
-                      darkMode
-                        ? "bg-white/5 text-white/80"
-                        : "bg-gray-100 text-gray-700"
-                    }`}
-                  >
-                    +{member.skills.length - 3}
-                  </span>
-                  <div
-                    className={`absolute z-20 bottom-full left-0 mb-2 p-2 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-in-out ${
-                      darkMode
-                        ? "bg-[#1E1E1E] border border-white/10"
-                        : "bg-white border border-gray-100"
-                    }`}
-                    style={{ width: "180px" }}
-                  >
-                    <div className="flex flex-wrap gap-1">
-                      {member.skills.slice(3).map((skill) => (
-                        <button
-                          key={`${member.id}-${skill}-tooltip`}
-                          onClick={() => handleSkillToggle(skill)}
-                          className={`px-2 py-1 rounded-md text-xs ${
-                            selectedSkills.includes(skill)
-                              ? "bg-[rgba(0,230,118,0.1)] text-[#00E676] border border-[rgba(0,230,118,0.3)]"
-                              : darkMode
-                              ? "bg-white/5 text-white/80 hover:bg-white/10"
-                              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                          }`}
-                        >
-                          {skill}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
               )}
             </div>
           </div>
@@ -363,6 +339,13 @@ const TeamMembersList = ({
   setCurrentPage,
   totalPages,
 }) => {
+  // Prevent default on pagination clicks
+  const handlePageClick = (page) => {
+    if (page !== currentPage) {
+      setCurrentPage(page);
+    }
+  };
+
   const renderPaginationItems = () => {
     const items = [];
 
@@ -371,7 +354,12 @@ const TeamMembersList = ({
       <li key="prev">
         <button
           disabled={currentPage === 1}
-          onClick={() => setCurrentPage(currentPage - 1)}
+          onClick={(e) => {
+            e.preventDefault();
+            if (currentPage > 1) {
+              setCurrentPage(currentPage - 1);
+            }
+          }}
           className={`w-9 h-9 rounded-md mx-0.5 flex items-center justify-center transition-all ${
             currentPage === 1
               ? `opacity-50 cursor-not-allowed ${
@@ -390,41 +378,15 @@ const TeamMembersList = ({
       </li>
     );
 
-    // First page
-    items.push(
-      <li key={1}>
-        <button
-          onClick={() => setCurrentPage(1)}
-          className={`w-9 h-9 rounded-md mx-0.5 flex items-center justify-center transition-all ${
-            currentPage === 1
-              ? `${
-                  darkMode
-                    ? "bg-[#00E676] text-black"
-                    : "bg-[#00E676] text-black"
-                }`
-              : `${
-                  darkMode
-                    ? "text-white hover:bg-white/10"
-                    : "text-black hover:bg-black/5"
-                }`
-          }`}
-          aria-label="Page 1"
-        >
-          1
-        </button>
-      </li>
-    );
+    // Generate page numbers
+    const pageNumbers = [];
 
-    // Ellipsis if needed before current
+    // Always show first page
+    pageNumbers.push(1);
+
+    // Add middle pages with ellipsis if needed
     if (currentPage > 3) {
-      items.push(
-        <li key="ellipsis1" className="mx-0.5 flex items-center justify-center">
-          <MoreHorizIcon
-            fontSize="small"
-            className={darkMode ? "text-white/50" : "text-black/50"}
-          />
-        </li>
-      );
+      pageNumbers.push(-1); // -1 represents ellipsis
     }
 
     // Pages around current
@@ -433,78 +395,78 @@ const TeamMembersList = ({
       i <= Math.min(totalPages - 1, currentPage + 1);
       i++
     ) {
-      if (i === 1 || i === totalPages) continue; // Skip first and last as they're always shown
-
-      items.push(
-        <li key={i}>
-          <button
-            onClick={() => setCurrentPage(i)}
-            className={`w-9 h-9 rounded-md mx-0.5 flex items-center justify-center transition-all ${
-              currentPage === i
-                ? `${
-                    darkMode
-                      ? "bg-[#00E676] text-black"
-                      : "bg-[#00E676] text-black"
-                  }`
-                : `${
-                    darkMode
-                      ? "text-white hover:bg-white/10"
-                      : "text-black hover:bg-black/5"
-                  }`
-            }`}
-            aria-label={`Page ${i}`}
-          >
-            {i}
-          </button>
-        </li>
-      );
+      if (!pageNumbers.includes(i)) {
+        pageNumbers.push(i);
+      }
     }
 
-    // Ellipsis if needed after current
+    // Add ellipsis before last page if needed
     if (currentPage < totalPages - 2) {
-      items.push(
-        <li key="ellipsis2" className="mx-0.5 flex items-center justify-center">
-          <MoreHorizIcon
-            fontSize="small"
-            className={darkMode ? "text-white/50" : "text-black/50"}
-          />
-        </li>
-      );
+      pageNumbers.push(-2); // -2 represents second ellipsis
     }
 
-    // Last page
-    if (totalPages > 1) {
-      items.push(
-        <li key={totalPages}>
-          <button
-            onClick={() => setCurrentPage(totalPages)}
-            className={`w-9 h-9 rounded-md mx-0.5 flex items-center justify-center transition-all ${
-              currentPage === totalPages
-                ? `${
-                    darkMode
-                      ? "bg-[#00E676] text-black"
-                      : "bg-[#00E676] text-black"
-                  }`
-                : `${
-                    darkMode
-                      ? "text-white hover:bg-white/10"
-                      : "text-black hover:bg-black/5"
-                  }`
-            }`}
-            aria-label={`Page ${totalPages}`}
-          >
-            {totalPages}
-          </button>
-        </li>
-      );
+    // Always show last page if there is more than one page
+    if (totalPages > 1 && !pageNumbers.includes(totalPages)) {
+      pageNumbers.push(totalPages);
     }
+
+    // Render the page buttons
+    pageNumbers.forEach((pageNum) => {
+      if (pageNum === -1 || pageNum === -2) {
+        // Render ellipsis
+        items.push(
+          <li
+            key={`ellipsis${pageNum}`}
+            className="mx-0.5 flex items-center justify-center"
+          >
+            <MoreHorizIcon
+              fontSize="small"
+              className={darkMode ? "text-white/50" : "text-black/50"}
+            />
+          </li>
+        );
+      } else {
+        // Render page number
+        items.push(
+          <li key={pageNum}>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                handlePageClick(pageNum);
+              }}
+              className={`w-9 h-9 rounded-md mx-0.5 flex items-center justify-center transition-all ${
+                currentPage === pageNum
+                  ? `${
+                      darkMode
+                        ? "bg-[#00E676] text-black"
+                        : "bg-[#00E676] text-black"
+                    }`
+                  : `${
+                      darkMode
+                        ? "text-white hover:bg-white/10"
+                        : "text-black hover:bg-black/5"
+                    }`
+              }`}
+              aria-label={`Page ${pageNum}`}
+            >
+              {pageNum}
+            </button>
+          </li>
+        );
+      }
+    });
 
     // Next button
     items.push(
       <li key="next">
         <button
           disabled={currentPage === totalPages}
-          onClick={() => setCurrentPage(currentPage + 1)}
+          onClick={(e) => {
+            e.preventDefault();
+            if (currentPage < totalPages) {
+              setCurrentPage(currentPage + 1);
+            }
+          }}
           className={`w-9 h-9 rounded-md mx-0.5 flex items-center justify-center transition-all ${
             currentPage === totalPages
               ? `opacity-50 cursor-not-allowed ${

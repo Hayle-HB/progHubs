@@ -9,6 +9,8 @@ import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import CloseIcon from "@mui/icons-material/Close";
 import InfoIcon from "@mui/icons-material/Info";
+import InstagramIcon from "@mui/icons-material/Instagram";
+import BookIcon from "@mui/icons-material/Book";
 
 // Professional team member card component
 const TeamMemberCard = ({
@@ -194,7 +196,7 @@ const TeamMemberCard = ({
                   >
                     Skills & Expertise
                   </h3>
-                  <div className="flex flex-wrap gap-2 mb-6">
+                  <div className="flex flex-wrap gap-2 mb-4">
                     {member.skills.map((skill) => (
                       <span
                         key={`modal-${member.id}-${skill}`}
@@ -209,77 +211,152 @@ const TeamMemberCard = ({
                     ))}
                   </div>
 
-                  {/* Social links */}
+                  {/* Social links - Compact row below skills */}
                   {member.social && (
-                    <>
-                      <h3
-                        className={`text-xl font-semibold mb-3 ${
-                          darkMode ? "text-white" : "text-gray-800"
-                        }`}
-                      >
-                        Connect
-                      </h3>
-                      <div className="flex gap-3">
-                        {member.social.linkedin && (
-                          <a
-                            href={member.social.linkedin}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={`p-2 rounded-md transition-colors ${
+                    <div className="flex items-center space-x-2 mt-3">
+                      {member.social.linkedin && (
+                        <a
+                          href={member.social.linkedin}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`p-2 rounded-full transition-colors relative group ${
+                            darkMode
+                              ? "text-white/70 hover:text-[#0077B5] hover:bg-white/5"
+                              : "text-gray-500 hover:text-[#0077B5] hover:bg-gray-100"
+                          }`}
+                          aria-label="LinkedIn Profile"
+                        >
+                          <LinkedInIcon fontSize="small" />
+                          <span
+                            className={`absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs font-medium rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-100 whitespace-nowrap ${
                               darkMode
-                                ? "text-white/60 hover:text-[#0077B5] hover:bg-white/5"
-                                : "text-gray-500 hover:text-[#0077B5] hover:bg-gray-100"
+                                ? "bg-gray-800 text-white shadow-lg"
+                                : "bg-gray-700 text-white shadow-md"
                             }`}
-                            aria-label="LinkedIn Profile"
                           >
-                            <LinkedInIcon />
-                          </a>
-                        )}
-                        {member.social.github && (
-                          <a
-                            href={member.social.github}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={`p-2 rounded-md transition-colors ${
+                            LinkedIn
+                          </span>
+                        </a>
+                      )}
+                      {member.social.github && (
+                        <a
+                          href={member.social.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`p-2 rounded-full transition-colors relative group ${
+                            darkMode
+                              ? "text-white/70 hover:text-white hover:bg-white/5"
+                              : "text-gray-500 hover:text-black hover:bg-gray-100"
+                          }`}
+                          aria-label="GitHub Profile"
+                        >
+                          <GitHubIcon fontSize="small" />
+                          <span
+                            className={`absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs font-medium rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-100 whitespace-nowrap ${
                               darkMode
-                                ? "text-white/60 hover:text-white hover:bg-white/5"
-                                : "text-gray-500 hover:text-black hover:bg-gray-100"
+                                ? "bg-gray-800 text-white shadow-lg"
+                                : "bg-gray-700 text-white shadow-md"
                             }`}
-                            aria-label="GitHub Profile"
                           >
-                            <GitHubIcon />
-                          </a>
-                        )}
-                        {member.social.twitter && (
-                          <a
-                            href={member.social.twitter}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={`p-2 rounded-md transition-colors ${
+                            GitHub
+                          </span>
+                        </a>
+                      )}
+                      {member.social.twitter && (
+                        <a
+                          href={member.social.twitter}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`p-2 rounded-full transition-colors relative group ${
+                            darkMode
+                              ? "text-white/70 hover:text-[#1DA1F2] hover:bg-white/5"
+                              : "text-gray-500 hover:text-[#1DA1F2] hover:bg-gray-100"
+                          }`}
+                          aria-label="Twitter Profile"
+                        >
+                          <TwitterIcon fontSize="small" />
+                          <span
+                            className={`absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs font-medium rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-100 whitespace-nowrap ${
                               darkMode
-                                ? "text-white/60 hover:text-[#1DA1F2] hover:bg-white/5"
-                                : "text-gray-500 hover:text-[#1DA1F2] hover:bg-gray-100"
+                                ? "bg-gray-800 text-white shadow-lg"
+                                : "bg-gray-700 text-white shadow-md"
                             }`}
-                            aria-label="Twitter Profile"
                           >
-                            <TwitterIcon />
-                          </a>
-                        )}
-                        {member.social.email && (
-                          <a
-                            href={`mailto:${member.social.email}`}
-                            className={`p-2 rounded-md transition-colors ${
+                            Twitter
+                          </span>
+                        </a>
+                      )}
+                      {member.social.email && (
+                        <a
+                          href={`mailto:${member.social.email}`}
+                          className={`p-2 rounded-full transition-colors relative group ${
+                            darkMode
+                              ? "text-white/70 hover:text-[#EA4335] hover:bg-white/5"
+                              : "text-gray-500 hover:text-[#EA4335] hover:bg-gray-100"
+                          }`}
+                          aria-label="Email Contact"
+                        >
+                          <EmailIcon fontSize="small" />
+                          <span
+                            className={`absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs font-medium rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-100 whitespace-nowrap ${
                               darkMode
-                                ? "text-white/60 hover:text-[#EA4335] hover:bg-white/5"
-                                : "text-gray-500 hover:text-[#EA4335] hover:bg-gray-100"
+                                ? "bg-gray-800 text-white shadow-lg"
+                                : "bg-gray-700 text-white shadow-md"
                             }`}
-                            aria-label="Email Contact"
                           >
-                            <EmailIcon />
-                          </a>
-                        )}
-                      </div>
-                    </>
+                            Email
+                          </span>
+                        </a>
+                      )}
+                      {member.social.instagram && (
+                        <a
+                          href={member.social.instagram}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`p-2 rounded-full transition-colors relative group ${
+                            darkMode
+                              ? "text-white/70 hover:text-[#E1306C] hover:bg-white/5"
+                              : "text-gray-500 hover:text-[#E1306C] hover:bg-gray-100"
+                          }`}
+                          aria-label="Instagram Profile"
+                        >
+                          <InstagramIcon fontSize="small" />
+                          <span
+                            className={`absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs font-medium rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-100 whitespace-nowrap ${
+                              darkMode
+                                ? "bg-gray-800 text-white shadow-lg"
+                                : "bg-gray-700 text-white shadow-md"
+                            }`}
+                          >
+                            Instagram
+                          </span>
+                        </a>
+                      )}
+                      {member.social.medium && (
+                        <a
+                          href={member.social.medium}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`p-2 rounded-full transition-colors relative group ${
+                            darkMode
+                              ? "text-white/70 hover:text-white hover:bg-white/5"
+                              : "text-gray-500 hover:text-black hover:bg-gray-100"
+                          }`}
+                          aria-label="Medium Profile"
+                        >
+                          <BookIcon fontSize="small" />
+                          <span
+                            className={`absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs font-medium rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-100 whitespace-nowrap ${
+                              darkMode
+                                ? "bg-gray-800 text-white shadow-lg"
+                                : "bg-gray-700 text-white shadow-md"
+                            }`}
+                          >
+                            Medium
+                          </span>
+                        </a>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>

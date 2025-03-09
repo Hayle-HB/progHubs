@@ -352,7 +352,15 @@ const Temp = () => {
             )}
 
             {/* Quote content */}
-            <div className="text-center px-4">
+            <div
+              className="text-center px-4"
+              style={{
+                backgroundImage: "url('/path/to/your/memorial-image.jpg')",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundBlendMode: "overlay",
+              }}
+            >
               <p
                 className={`${
                   currentQuote.isAmharic
@@ -412,9 +420,10 @@ const Temp = () => {
                       darkMode ? "text-gray-400" : "text-gray-600"
                     }`}
                   >
-                    Though you're gone, your memory remains eternal. The void
-                    you left can never be filled, but your spirit guides me
-                    through each passing day.
+                    Your absence is a wound that never heals. In my darkest
+                    moments, I reach for your hand, only to grasp emptiness. Yet
+                    somehow, in that void, I still feel you—my brother, my
+                    guardian, forever.
                   </p>
                 </div>
               )}

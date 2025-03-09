@@ -307,6 +307,27 @@ export const generateTeamMembers = () => {
         Math.random() > 0.5 ? "men" : "women"
       }/${imageId % 100}.jpg`;
 
+      // Generate random social media profiles - ensure all users have all networks
+      const social = {
+        linkedin: `https://linkedin.com/in/${name
+          .toLowerCase()
+          .replace(" ", "-")}${Math.floor(Math.random() * 100)}`,
+        github: `https://github.com/${name
+          .split(" ")[0]
+          .toLowerCase()}${Math.floor(Math.random() * 1000)}`,
+        twitter: `https://twitter.com/${name
+          .split(" ")[0]
+          .toLowerCase()}${Math.floor(Math.random() * 100)}`,
+        email: `${name.toLowerCase().replace(" ", ".")}@example.com`,
+        // Add additional platforms consistently for all users
+        instagram: `https://instagram.com/${name
+          .split(" ")[0]
+          .toLowerCase()}${Math.floor(Math.random() * 100)}`,
+        medium: `https://medium.com/@${name
+          .toLowerCase()
+          .replace(" ", ".")}${Math.floor(Math.random() * 100)}`,
+      };
+
       members.push({
         id: i + 1,
         name,
@@ -316,6 +337,7 @@ export const generateTeamMembers = () => {
         skills,
         bio,
         image: imageUrl,
+        social,
       });
     }
 
